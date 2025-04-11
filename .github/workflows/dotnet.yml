@@ -21,9 +21,9 @@ jobs:
     - name: Build
       run: dotnet build --no-restore -c Release
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal -c Release
     
     - name: Generate NuGet package
-      run: dotnet pack --configuration Release
+      run: dotnet pack -c Release
     - name: Publish  
       run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.PUSH_NUGET }} --source https://api.nuget.org/v3/index.json
