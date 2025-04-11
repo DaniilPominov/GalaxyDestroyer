@@ -4,6 +4,10 @@ using System.Reflection.Emit;
 
 namespace GalaxyDestroyer;
 
+/// <summary>
+/// Provides mathematical operations for different numeric types including double, int and string representations.
+/// Includes basic arithmetic operations, power functions and square root calculations.
+/// </summary>
 public class Destroyer
 {
     /// <summary>
