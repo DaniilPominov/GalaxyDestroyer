@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>GalaxyDestroyer</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>EvaEnjoyner</Authors>
     <Company>sibFU</Company>
     <Description>An awesome library that does amazing things</Description>
