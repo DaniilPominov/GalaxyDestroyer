@@ -29,8 +29,5 @@ jobs:
     
     
     - name: Publish  
-      uses: brandedoutcast/publish-nuget@v2.5.2  
-      with:   
-       PROJECT_FILE_PATH: GalaxyDestroyer/GalaxyDestroyer.csproj 
-       NUGET_KEY: ${{secrets.PUSH_NUGET}}  
+      run: dotnet nuget push bin/Release/*.nupkg --api-key ${{ secrets.PUSH_NUGET }} --source https://api.nuget.org/v3/index.json
 
