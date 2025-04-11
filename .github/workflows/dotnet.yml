@@ -26,4 +26,4 @@ jobs:
     - name: Generate NuGet package
       run: dotnet pack -c Release
     - name: Publish  
-      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.PUSH_NUGET }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push bin/Release/*.nupkg --api-key ${{ secrets.PUSH_NUGET }} --source https://api.nuget.org/v3/index.json
