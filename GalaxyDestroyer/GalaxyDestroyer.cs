@@ -1,10 +1,61 @@
 ﻿using System.ComponentModel;
 using System.Numerics;
+using System.Reflection.Emit;
 
 namespace GalaxyDestroyer;
 
 public class Destroyer
 {
+    /// <summary>
+    /// Returns the absolute value of a double-precision floating-point number.
+    /// </summary>
+    /// <param name="a">The number to get the absolute value of.</param>
+    /// <returns>
+    /// The absolute value of a. If a is positive, returns a unchanged.
+    /// If a is negative, returns -a. Returns 0 if a is 0.
+    /// </returns>
+    public static double Abs(double a)
+    {
+        if (a > 0)
+        {
+            return a;
+        }
+        return -a;  // Fixed: should return -a for negative numbers
+    }
+
+    /// <summary>
+    /// Returns the absolute value of a 32-bit integer.
+    /// </summary>
+    /// <param name="a">The integer to get the absolute value of.</param>
+    /// <returns>
+    /// The absolute value of a. If a is positive, returns a unchanged.
+    /// If a is negative, returns -a. Returns 0 if a is 0.
+    /// </returns>
+    public static int Abs(int a)
+    {
+        if (a > 0)
+        {
+            return a;
+        }
+        return -a;  // Fixed: should return -a for negative numbers
+    }
+
+    /// <summary>
+    /// Returns the absolute value of a numeric string after parsing it to a number.
+    /// </summary>
+    /// <param name="a">The numeric string to get the absolute value of.</param>
+    /// <returns>
+    /// The absolute value of the parsed number as a string.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown when the string cannot be parsed to a valid number.
+    /// </exception>
+    public static string Abs(string a)
+    {
+        if (double.TryParse(a, out var numA))
+            return Abs(numA).ToString();
+        throw new ArgumentException("Strings must contain valid numbers");
+    }
     /// <summary>
     /// Adds two double-precision floating-point numbers.
     /// </summary>
@@ -12,7 +63,7 @@ public class Destroyer
     /// <param name="b">The second number to add.</param>
     /// <returns>The sum of a and b.</returns>
     public static double Add(double a, double b) => a + b;
-    
+
     /// <summary>
     /// Adds two 32-bit integers.
     /// </summary>
@@ -20,7 +71,7 @@ public class Destroyer
     /// <param name="b">The second integer to add.</param>
     /// <returns>The sum of a and b.</returns>
     public static int Add(int a, int b) => a + b;
-    
+
     /// <summary>
     /// Adds two numeric strings after parsing them to numbers.
     /// </summary>
@@ -42,7 +93,7 @@ public class Destroyer
     /// <param name="b">The subtrahend.</param>
     /// <returns>The result of subtracting b from a.</returns>
     public static double Subtract(double a, double b) => a - b;
-    
+
     /// <summary>
     /// Subtracts one 32-bit integer from another.
     /// </summary>
@@ -50,7 +101,7 @@ public class Destroyer
     /// <param name="b">The subtrahend.</param>
     /// <returns>The result of subtracting b from a.</returns>
     public static int Subtract(int a, int b) => a - b;
-    
+
     /// <summary>
     /// Subtracts two numeric strings after parsing them to numbers.
     /// </summary>
@@ -72,7 +123,7 @@ public class Destroyer
     /// <param name="b">The second factor.</param>
     /// <returns>The product of a and b.</returns>
     public static double Multiply(double a, double b) => a * b;
-    
+
     /// <summary>
     /// Multiplies two 32-bit integers.
     /// </summary>
@@ -80,7 +131,7 @@ public class Destroyer
     /// <param name="b">The second factor.</param>
     /// <returns>The product of a and b.</returns>
     public static int Multiply(int a, int b) => a * b;
-    
+
     /// <summary>
     /// Multiplies two numeric strings after parsing them to numbers.
     /// </summary>
@@ -107,7 +158,7 @@ public class Destroyer
         if (b == 0) throw new DivideByZeroException("Division by zero is not allowed");
         return a / b;
     }
-    
+
     /// <summary>
     /// Divides one 32-bit integer by another.
     /// </summary>
@@ -120,7 +171,7 @@ public class Destroyer
         if (b == 0) throw new DivideByZeroException("Division by zero is not allowed");
         return a / b;
     }
-    
+
     /// <summary>
     /// Divides two numeric strings after parsing them to numbers.
     /// </summary>
@@ -149,27 +200,27 @@ public class Destroyer
     public static double Power(double a, double b)
     {
         if (a == 0 && b < 0) throw new DivideByZeroException("Zero cannot be raised to a negative power");
-        
+
         double result = 1;
         bool negativeExponent = b < 0;
-        int iterations = (int)Math.Abs(b);
-        double remaining = Math.Abs(b) - iterations;
-        
+        int iterations = (int)Abs(b);
+        double remaining = Abs(b) - iterations;
+
         for (int i = 0; i < iterations; i++)
         {
             result *= a;
         }
-        
+
         if (remaining > 0)
         {
             double x = remaining * Math.Log(a);
             double approx = 1 + x + (x * x) / 2 + (x * x * x) / 6;
             result *= approx;
         }
-        
+
         return negativeExponent ? 1 / result : result;
     }
-    
+
     /// <summary>
     /// Raises a 32-bit integer to a specified non-negative integer power.
     /// </summary>
@@ -180,7 +231,7 @@ public class Destroyer
     public static int Power(int a, int b)
     {
         if (b < 0) throw new DivideByZeroException("Integer power doesn't support negative exponents");
-        
+
         int result = 1;
         for (int i = 0; i < b; i++)
         {
@@ -188,7 +239,7 @@ public class Destroyer
         }
         return result;
     }
-    
+
     /// <summary>
     /// Raises a numeric string to the power of another numeric string after parsing them to numbers.
     /// </summary>
@@ -213,18 +264,18 @@ public class Destroyer
     {
         if (a < 0) throw new ArgumentException("Square root of negative number is not defined");
         if (a == 0) return 0;
-        
+
         double epsilon = 0.000001;
         double guess = a / 2.0;
-        
-        while (Math.Abs(guess * guess - a) > epsilon)
+
+        while (Abs(guess * guess - a) > epsilon)
         {
             guess = (guess + a / guess) / 2.0;
         }
-        
+
         return guess;
     }
-    
+
     /// <summary>
     /// Calculates the integer square root of a 32-bit integer using binary search.
     /// </summary>
@@ -235,13 +286,13 @@ public class Destroyer
     {
         if (a < 0) throw new ArgumentException("Square root of negative number is not defined");
         if (a == 0) return 0;
-        
+
         int left = 1, right = a, result = 0;
-        
+
         while (left <= right)
         {
             int mid = left + (right - left) / 2;
-            
+
             if (mid <= a / mid)
             {
                 left = mid + 1;
@@ -252,10 +303,10 @@ public class Destroyer
                 right = mid - 1;
             }
         }
-        
+
         return result;
     }
-    
+
     /// <summary>
     /// Calculates the square root of a numeric string after parsing it to a number.
     /// </summary>
