@@ -321,5 +321,39 @@ namespace Tests
         }
 
         #endregion
+
+        #region SuperSum test
+        [TestMethod]
+    public void SuperSum_Double_ValidConcatenation_ReturnsParsedDouble()
+    {
+        double a = 12.3;
+        double b = 4.56;
+
+        double result = Destroyer.SuperSum(a, b);
+
+        Assert.AreEqual(124.56, result, 0.1); 
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void SuperSum_Double_InvalidConcatenation_ThrowsArgumentException()
+    {
+        double a = double.NaN;
+        double b = double.PositiveInfinity;
+
+        Destroyer.SuperSum(a, b);
+    }
+
+    [TestMethod]
+    public void SuperSum_Int_ValidConcatenation_ReturnsParsedInt()
+    {
+        int a = 123;
+        int b = 456;
+
+        double result = Destroyer.SuperSum(a, b);
+
+        Assert.AreEqual((double)123456, result);
+    }
+    }
+    #endregion
 }

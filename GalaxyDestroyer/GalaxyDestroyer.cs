@@ -1,8 +1,4 @@
-﻿using System.ComponentModel;
-using System.Numerics;
-using System.Reflection.Emit;
-
-namespace GalaxyDestroyer;
+﻿namespace GalaxyDestroyer;
 
 /// <summary>
 /// Provides mathematical operations for different numeric types including double, int and string representations.
@@ -10,6 +6,71 @@ namespace GalaxyDestroyer;
 /// </summary>
 public class Destroyer
 {
+
+    /// <summary>
+    /// Performs a "super sum" operation by converting the first number to an integer, 
+    /// then concatenating it with the string representation of the second number,
+    /// and parsing the result as a double.
+    /// </summary>
+    /// <param name="a">The first double value to be converted to integer before concatenation.</param>
+    /// <param name="b">The second double value to be concatenated.</param>
+    /// <returns>The parsed result of the concatenated values as a double.</returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown when:
+    /// - The first value cannot be converted to a 32-bit integer (overflow)
+    /// - The concatenated result cannot be parsed as a double
+    /// </exception>
+    /// <remarks>
+    /// The method first attempts to convert the first parameter to a 32-bit integer.
+    /// If successful, it concatenates this integer with the string representation
+    /// of the second parameter and attempts to parse the result as a double.
+    /// </remarks>
+    public static double SuperSum(double a, double b)
+    {
+        try
+        {
+            var intA = Convert.ToInt32(a);
+        }
+        catch (OverflowException ex)
+        {
+            throw new ArgumentException("Concatenated value is not a valid double.");
+        }
+
+        if (int.TryParse(Convert.ToInt32(a).ToString(), out var aInteger))
+        {
+            if (double.TryParse(aInteger.ToString() + b.ToString(), out var result))
+                return result;
+        }
+        throw new ArgumentException("Concatenated value is not a valid double.");
+    }
+
+    /// <summary>
+    /// Concatenates the string representations of two integers, parses the result, and returns it as a double.
+    /// </summary>
+    /// <param name="a">The first integer value.</param>
+    /// <param name="b">The second integer value.</param>
+    /// <returns>The parsed result of concatenated string representations of a and b.</returns>
+    /// <exception cref="ArgumentException">Thrown when the concatenated string cannot be parsed as an integer.</exception>
+    public static double SuperSum(int a, int b)
+    {
+        if (double.TryParse(a.ToString() + b.ToString(), out var result))
+            return result;
+        throw new ArgumentException("Concatenated value is not a valid integer.");
+    }
+
+    /// <summary>
+    /// Concatenates two strings and returns the combined result as double.
+    /// </summary>
+    /// <param name="a">The first string.</param>
+    /// <param name="b">The second string.</param>
+    /// <returns>The concatenation of a and b.</returns>
+    public static double SuperSum(string a, string b)
+    {
+        if (double.TryParse(a, out var numA) && double.TryParse(b, out var numB))
+            return SuperSum(numA,numB);
+        throw new ArgumentException("Strings must contain valid numbers");
+    }
+
     /// <summary>
     /// Returns the absolute value of a double-precision floating-point number.
     /// </summary>
