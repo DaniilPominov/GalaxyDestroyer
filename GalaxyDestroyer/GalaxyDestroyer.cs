@@ -1,4 +1,6 @@
-﻿namespace GalaxyDestroyer;
+﻿using System.Linq.Expressions;
+
+namespace GalaxyDestroyer;
 
 /// <summary>
 /// Provides mathematical operations for different numeric types including double, int and string representations.
@@ -6,6 +8,100 @@
 /// </summary>
 public class Destroyer
 {
+    /// <summary>
+    /// Parses and calculates the result of a mathematical expression given as a string.
+    /// </summary>
+    /// <param name="expression">The mathematical expression (e.g., "2+3*4").</param>
+    /// <returns>The computed result as a double.</returns>
+    /// <exception cref="ArgumentException">Thrown when the input is empty, null, or contains invalid characters.</exception>
+    /// <exception cref="DivideByZeroException">Thrown when division by zero occurs.</exception>
+    /// <example>
+    /// <code>
+    /// double result = Calculator("2+3*4"); // Returns 14
+    /// </code>
+    /// </example>
+    public static double Calculator(string expression)
+    {
+        if (string.IsNullOrWhiteSpace(expression))
+            throw new ArgumentException("Input string cannot be empty or null.");
+
+        expression = expression.Replace(" ", "");
+
+        var numbers = new List<double>();
+        var operators = new List<char>();
+        int i = 0;
+
+        while (i < expression.Length)
+        {
+            int start = i;
+            if (expression[i] == '-' && (i == 0 || IsOperator(expression[i - 1])))
+                i++;
+            while (i < expression.Length && (char.IsDigit(expression[i]) || expression[i] == '.'))
+                i++;
+
+            if (!double.TryParse(expression.Substring(start, i - start), out double num))
+                throw new ArgumentException($"Invalid number at position {start}");
+
+            numbers.Add(num);
+
+            if (i >= expression.Length)
+                break;
+
+            // reading numbers is finished, but next char !operator
+            if (!IsOperator(expression[i]))
+                throw new ArgumentException($"Invalid operator at position {i}");
+
+            operators.Add(expression[i]);
+            i++;
+        }
+
+        if (numbers.Count != operators.Count + 1)
+            throw new ArgumentException("Invalid expression format");
+
+        // * and /
+        for (int j = 0; j < operators.Count;)
+        {
+            char op = operators[j];
+            if (op == '*' || op == '/')
+            {
+                double a = numbers[j];
+                double b = numbers[j + 1];
+                double res = op == '*' ? a * b : a / b;
+
+                if (op == '/' && b == 0)
+                    throw new DivideByZeroException("Division by zero");
+
+                numbers[j] = res;
+                numbers.RemoveAt(j + 1);
+                operators.RemoveAt(j);
+            }
+            else
+            {
+                j++;
+            }
+        }
+
+        //+ and -
+        double result = numbers[0];
+        for (int j = 0; j < operators.Count; j++)
+        {
+            char op = operators[j];
+            double nextNum = numbers[j + 1];
+            result = op == '+' ? result + nextNum : result - nextNum;
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Checks if a character is a valid arithmetic operator (+, -, *, /).
+    /// </summary>
+    /// <param name="c">The character to check.</param>
+    /// <returns>True if the character is an operator; otherwise, false.</returns>
+    private static bool IsOperator(char c)
+    {
+        return c == '+' || c == '-' || c == '*' || c == '/';
+    }
 
     /// <summary>
     /// Performs a "super sum" operation by converting the first number to an integer, 
