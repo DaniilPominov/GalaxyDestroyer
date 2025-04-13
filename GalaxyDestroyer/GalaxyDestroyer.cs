@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using System.Numerics;
-using System.Reflection.Emit;
+﻿using System.Linq.Expressions;
 
 namespace GalaxyDestroyer;
 
@@ -10,6 +8,165 @@ namespace GalaxyDestroyer;
 /// </summary>
 public class Destroyer
 {
+    /// <summary>
+    /// Parses and calculates the result of a mathematical expression given as a string.
+    /// </summary>
+    /// <param name="expression">The mathematical expression (e.g., "2+3*4").</param>
+    /// <returns>The computed result as a double.</returns>
+    /// <exception cref="ArgumentException">Thrown when the input is empty, null, or contains invalid characters.</exception>
+    /// <exception cref="DivideByZeroException">Thrown when division by zero occurs.</exception>
+    /// <example>
+    /// <code>
+    /// double result = Calculator("2+3*4"); // Returns 14
+    /// </code>
+    /// </example>
+    public static double Calculator(string expression)
+    {
+        if (string.IsNullOrWhiteSpace(expression))
+            throw new ArgumentException("Input string cannot be empty or null.");
+
+        expression = expression.Replace(" ", "");
+
+        var numbers = new List<double>();
+        var operators = new List<char>();
+        int i = 0;
+
+        while (i < expression.Length)
+        {
+            int start = i;
+            if (expression[i] == '-' && (i == 0 || IsOperator(expression[i - 1])))
+                i++;
+            while (i < expression.Length && (char.IsDigit(expression[i]) || expression[i] == '.'))
+                i++;
+
+            if (!double.TryParse(expression.Substring(start, i - start), out double num))
+                throw new ArgumentException($"Invalid number at position {start}");
+
+            numbers.Add(num);
+
+            if (i >= expression.Length)
+                break;
+
+            // reading numbers is finished, but next char !operator
+            if (!IsOperator(expression[i]))
+                throw new ArgumentException($"Invalid operator at position {i}");
+
+            operators.Add(expression[i]);
+            i++;
+        }
+
+        if (numbers.Count != operators.Count + 1)
+            throw new ArgumentException("Invalid expression format");
+
+        // * and /
+        for (int j = 0; j < operators.Count;)
+        {
+            char op = operators[j];
+            if (op == '*' || op == '/')
+            {
+                double a = numbers[j];
+                double b = numbers[j + 1];
+                double res = op == '*' ? a * b : a / b;
+
+                if (op == '/' && b == 0)
+                    throw new DivideByZeroException("Division by zero");
+
+                numbers[j] = res;
+                numbers.RemoveAt(j + 1);
+                operators.RemoveAt(j);
+            }
+            else
+            {
+                j++;
+            }
+        }
+
+        //+ and -
+        double result = numbers[0];
+        for (int j = 0; j < operators.Count; j++)
+        {
+            char op = operators[j];
+            double nextNum = numbers[j + 1];
+            result = op == '+' ? result + nextNum : result - nextNum;
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Checks if a character is a valid arithmetic operator (+, -, *, /).
+    /// </summary>
+    /// <param name="c">The character to check.</param>
+    /// <returns>True if the character is an operator; otherwise, false.</returns>
+    private static bool IsOperator(char c)
+    {
+        return c == '+' || c == '-' || c == '*' || c == '/';
+    }
+
+    /// <summary>
+    /// Performs a "super sum" operation by converting the first number to an integer, 
+    /// then concatenating it with the string representation of the second number,
+    /// and parsing the result as a double.
+    /// </summary>
+    /// <param name="a">The first double value to be converted to integer before concatenation.</param>
+    /// <param name="b">The second double value to be concatenated.</param>
+    /// <returns>The parsed result of the concatenated values as a double.</returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown when:
+    /// - The first value cannot be converted to a 32-bit integer (overflow)
+    /// - The concatenated result cannot be parsed as a double
+    /// </exception>
+    /// <remarks>
+    /// The method first attempts to convert the first parameter to a 32-bit integer.
+    /// If successful, it concatenates this integer with the string representation
+    /// of the second parameter and attempts to parse the result as a double.
+    /// </remarks>
+    public static double SuperSum(double a, double b)
+    {
+        try
+        {
+            var intA = Convert.ToInt32(a);
+        }
+        catch (OverflowException ex)
+        {
+            throw new ArgumentException("Concatenated value is not a valid double.");
+        }
+
+        if (int.TryParse(Convert.ToInt32(a).ToString(), out var aInteger))
+        {
+            if (double.TryParse(aInteger.ToString() + b.ToString(), out var result))
+                return result;
+        }
+        throw new ArgumentException("Concatenated value is not a valid double.");
+    }
+
+    /// <summary>
+    /// Concatenates the string representations of two integers, parses the result, and returns it as a double.
+    /// </summary>
+    /// <param name="a">The first integer value.</param>
+    /// <param name="b">The second integer value.</param>
+    /// <returns>The parsed result of concatenated string representations of a and b.</returns>
+    /// <exception cref="ArgumentException">Thrown when the concatenated string cannot be parsed as an integer.</exception>
+    public static double SuperSum(int a, int b)
+    {
+        if (double.TryParse(a.ToString() + b.ToString(), out var result))
+            return result;
+        throw new ArgumentException("Concatenated value is not a valid integer.");
+    }
+
+    /// <summary>
+    /// Concatenates two strings and returns the combined result as double.
+    /// </summary>
+    /// <param name="a">The first string.</param>
+    /// <param name="b">The second string.</param>
+    /// <returns>The concatenation of a and b.</returns>
+    public static double SuperSum(string a, string b)
+    {
+        if (double.TryParse(a, out var numA) && double.TryParse(b, out var numB))
+            return SuperSum(numA,numB);
+        throw new ArgumentException("Strings must contain valid numbers");
+    }
+
     /// <summary>
     /// Returns the absolute value of a double-precision floating-point number.
     /// </summary>

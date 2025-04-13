@@ -5,6 +5,83 @@ namespace Tests
     [TestClass]
     public class DestroyerTests
     {
+        #region Calculator test
+        [TestMethod]
+        public void TestAddition()
+        {
+            Assert.AreEqual(5, Destroyer.Calculator("2+3"));
+        }
+
+        [TestMethod]
+        public void TestSubtraction()
+        {
+            Assert.AreEqual(-1, Destroyer.Calculator("2-3"));
+        }
+
+        [TestMethod]
+        public void TestMultiplication()
+        {
+            Assert.AreEqual(6, Destroyer.Calculator("2*3"));
+        }
+
+        [TestMethod]
+        public void TestDivision()
+        {
+            Assert.AreEqual(2, Destroyer.Calculator("6/3"));
+        }
+
+        [TestMethod]
+        public void TestOperatorPrecedence_MultiplicationBeforeAddition()
+        {
+            Assert.AreEqual(14, Destroyer.Calculator("3*4+2"));
+        }
+
+        [TestMethod]
+        public void TestOperatorPrecedence_DivisionBeforeSubtraction()
+        {
+            Assert.AreEqual(2, Destroyer.Calculator("10/2-3"));
+        }
+
+        [TestMethod]
+        public void TestDecimalNumbers()
+        {
+            Assert.AreEqual(9, Destroyer.Calculator("2.5*3+1.5"));
+        }
+
+        [TestMethod]
+        public void TestNegativeNumbers()
+        {
+            Assert.AreEqual(1, Destroyer.Calculator("-5+3*2"));
+        }
+
+        [TestMethod]
+        public void TestExpressionWithSpaces()
+        {
+            Assert.AreEqual(5, Destroyer.Calculator(" 2 + 3 "));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestEmptyInput_ThrowsArgumentException()
+        {
+            Destroyer.Calculator("");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestInvalidOperator_ThrowsArgumentException()
+        {
+            Destroyer.Calculator("2&3");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(DivideByZeroException))]
+        public void TestDivisionByZero_ThrowsDivideByZeroException()
+        {
+            Destroyer.Calculator("5/0");
+        }
+        #endregion
+        
         #region Abs Tests
 
         [TestMethod]
@@ -321,5 +398,39 @@ namespace Tests
         }
 
         #endregion
+
+        #region SuperSum test
+        [TestMethod]
+    public void SuperSum_Double_ValidConcatenation_ReturnsParsedDouble()
+    {
+        double a = 12.3;
+        double b = 4.56;
+
+        double result = Destroyer.SuperSum(a, b);
+
+        Assert.AreEqual(124.56, result, 0.1); 
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void SuperSum_Double_InvalidConcatenation_ThrowsArgumentException()
+    {
+        double a = double.NaN;
+        double b = double.PositiveInfinity;
+
+        Destroyer.SuperSum(a, b);
+    }
+
+    [TestMethod]
+    public void SuperSum_Int_ValidConcatenation_ReturnsParsedInt()
+    {
+        int a = 123;
+        int b = 456;
+
+        double result = Destroyer.SuperSum(a, b);
+
+        Assert.AreEqual((double)123456, result);
+    }
+    }
+    #endregion
 }
